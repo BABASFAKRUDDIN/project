@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- DATA TABLE -->
+        <h2 class="heading-title m-b-35">{{ movie.name }} </h2>
+        <div>
+            <img src="/imdb/media/{{ movie.poster }}" alt="Hi" style="height:300px;width:300px;">
+        </div>
+        <div>
+            <p class="director-note">
+                {{ movie.description }}
+            </p>
+        </div>
+
+        <h3 class="title-3 m-b-45">Director: <a href="/imdb/director/{{ movie.director.id }}/">{{ movie.director.name }}</a></h3>
+
+        <h3 class="title-5 m-b-45">Actors</h3>
+        <div class="table-responsive table-responsive-data2">
+            
+            <table class="table table-data2">
+                <thead>
+                <tr>
+                    <th>Actor id</th>
+                    <th>Name</th>
+                    <th>Date Of Birth</th>
+                    <th>Gender</th>
+                </tr>
+                </thead>
+               
+                <tbody>
+                {% for movie in all_actors %}
+                <tr class="tr-shadow">                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                    <td>{{ movie.actor_id }}</td>
+                    <td >
+                        <a href="/imdb/actor/{{ movie.actor_id }}/">{{ movie.name }}</a>
+                    </td>
+                    <td>{{ movie.date_of_birth }}</td>
+                    <td>{{ movie.gender }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="spacer"></tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- END DATA TABLE -->
+</div>
+</div>
+
+{% endblock %}
