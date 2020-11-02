@@ -1,30 +1,28 @@
+
 from django.db import models
 
 # Create your models here.
-
-class Director(models.Model):
-    Gender= (
+Gender= (
     ("M", "Male"),
     ("F", "Female")
     )
+class Director(models.Model):
+    
     name=models.CharField(max_length=100,unique=True)
     date_of_birth=models.DateField(null=True)
     gender=models.CharField(max_length=6,choices=Gender)
     description=models.TextField(null=True)
     poster=models.ImageField(null=True)
-    no_of_facebook_likes=models.CharField(max_length=100,null=True)
+    no_of_facebook_likes=models.IntegerField(null=True)
+
 class Actor(models.Model):
-    Gender= (
-    ("M", "Male"),
-    ("F", "Female")
-    )
     actor_id=models.CharField(max_length=100,primary_key=True)
     name=models.CharField(max_length=100)
     date_of_birth=models.DateField(null=True)
     gender=models.CharField(max_length=6,choices=Gender,null=True)
     description=models.TextField(null=True)
     poster=models.ImageField(null=True)
-    fb_likes=models.CharField(max_length=100,null=True)
+    fb_likes=models.IntegerField(null=True)
 
 class Movie(models.Model):
     Status=(
@@ -34,7 +32,7 @@ class Movie(models.Model):
     )
     name=models.CharField(max_length=100)
     movie_id=models.CharField(max_length=100,primary_key=True)
-    release_date=models.CharField(max_length=100,null=True)
+    release_date=models.IntegerField(null=True)
     box_office_collection_in_crores=models.FloatField()
     director=models.ForeignKey(Director,on_delete=models.CASCADE)
     actors=models.ManyToManyField(Actor,through="Cast")
@@ -42,7 +40,7 @@ class Movie(models.Model):
     description=models.TextField(null=True)
     result=models.CharField(max_length=12,choices=Status,null=True)
     genre=models.CharField(max_length=50,null=True)
-    fb_likes=models.CharField(max_length=100,null=True)
+    fb_likes=models.IntegerField(null=True)
     country=models.CharField(max_length=100,null=True)
     average_rating=models.FloatField(null=True)
     language=models.CharField(max_length=50,null=True)

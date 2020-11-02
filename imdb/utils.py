@@ -1,37 +1,49 @@
 from imdb.models import *
 
 def actor_database():
-    a=open('/home/rgukt/Desktop/complete_data/actors_5000.json','r')
+    a=open('/home/rgukt/Desktop/100_movies/actors_100.json','r')
     r=a.read()
     import json
     data=json.loads(r)
-    for actor in data:
+    return data
+    
+def director_database():
+    a=open('/home/rgukt/Desktop/100_movies/directors_100.json','r')
+    r=a.read()
+    import json
+    data=json.loads(r)
+    return data
+def movie_database():
+    a=open('/home/rgukt/Desktop/100_movies/movies_100.json','r')
+    r=a.read()
+    import json
+    import random
+    data=json.loads(r)
+    return data
+
+actor_list=actor_database()
+director_list=director_database()
+movie_list=movie_database()
+
+
+def populate_database(actor_list,director_list,movie_list):
+    import random
+    for actor in actor_list:
         Actor.objects.create(actor_id=actor["actor_id"],
         name=actor["name"],
         gender=actor['gender'],
         fb_likes=actor['fb_likes']
         )
-def director_database():
-    a=open('/home/rgukt/Desktop/complete_data/directors_5000.json','r')
-    r=a.read()
-    import json
-    data=json.loads(r)
-    for actor in data:
-        Director.objects.create(name=actor["name"],
-        gender=actor['gender'],
-        no_of_facebook_likes=actor['no_of_facebook_likes']
+    for d in director_list:
+        Director.objects.create(name=d["name"],
+        gender=d['gender'],
+        no_of_facebook_likes=d['no_of_facebook_likes']
         )
-def movie_database():
-    a=open('/home/rgukt/Desktop/complete_data/movies_5000.json','r')
-    r=a.read()
-    import json
-    import random
-    data=json.loads(r)
-    for movies in data:
+    for movies in movie_list:
         Movie.objects.create(movie_id=movies['movie_id'],
         name=movies['name'],
         box_office_collection_in_crores=movies["box_office_collection_in_crores"],
-        release_date=movies['release_date'],
+        release_date=movies['year_of_release'],
         director=Director.objects.get(name=movies['director_name']),
         genre=random.choice(movies['genres']),
         no_of_users_voted=movies['no_of_users_voted'],
@@ -44,7 +56,6 @@ def movie_database():
             Cast.objects.create(actor=Actor.objects.get(actor_id=actor['actor_id']),
             movie=Movie.objects.get(movie_id=movies['movie_id']),
             is_debut_movie=actor['is_debut_movie'])
-
 
 
 def execute_sql_query(sql_query):
@@ -69,10 +80,10 @@ def get_one_bar_plot_data():
     collections_list=Movie.objects.values_list('box_office_collection_in_crores',flat=True)
     ids_list=Movie.objects.values_list('name',flat=True)
     data1=execute_sql_query("""
-        select max(box_office_collection_in_crores) from imdb_movie group by release_date
+        select max(box_office_collection_in_crores) from imdb_movie where release_date between 1995 and 2016 group by release_date
     """)
     data2=execute_sql_query("""
-        select strftime('%Y',release_date) from imdb_movie group by release_date
+        select release_date from imdb_movie  where release_date between 1995 and 2016 group by release_date
     """)
 
 
@@ -83,9 +94,9 @@ def get_one_bar_plot_data():
         {        
 		"data": list(data1),
 		"name": "Single Bar Chart",
-		"borderColor": "rgba(0, 123, 255, 0.9)",
+		"borderColor": "rgba(0, 255, 0, 0.9)",
 		"border_width": "0",
-		"backgroundColor": "rgba(0, 123, 255, 0.5)"
+		"backgroundColor": "rgba(0, 255, 0, 0.9)"
 	    }
 	]
     }
@@ -98,28 +109,28 @@ def get_two_bar_plot_data():
     import json
     import copy
     data1=execute_sql_query("""
-    select strftime('%Y',m.release_date),gender,count(*) from imdb_movie as m,imdb_cast as c , imdb_actor as a where m.movie_id=c.movie_id and c.actor_id=a.actor_id  group by strftime('%Y',m.release_date),gender;
+    select `m`.release_date,`a`.gender,count(*) from imdb_movie as m,imdb_cast as c ,imdb_actor as a where `m`.movie_id=`c`.movie_id and `c`.actor_id=`a`.actor_id  group by `m`.release_date,`a`.gender;
     """
     )
     data3=execute_sql_query("""
-    select strftime('%Y',m.release_date) from imdb_movie as m,imdb_cast as c , imdb_actor as a where m.movie_id=c.movie_id and c.actor_id=a.actor_id  group by strftime('%Y',m.release_date);
+    select `m`.release_date from imdb_movie as m,imdb_cast as c, imdb_actor as a where `m`.movie_id=`c`.movie_id and `c`.actor_id=`a`.actor_id  group by `m`.release_date;
     """
     )
     y={}
-    g={'M':0,
-    'F':0}
+    g={'male':0,
+    'female':0}
     for year in data3:
         y[year[0]]=copy.deepcopy(g)
     for year,gender,count in data1:
-        if(gender == 'M'):
-            y[year]['M']=copy.deepcopy(count)
+        if(gender == 'male'):
+            y[year]['male']=copy.deepcopy(count)
         else:
-             y[year]['F']=copy.deepcopy(count)
+             y[year]['female']=copy.deepcopy(count)
     l1=[]
     l2=[]
     for x in y.values():
-        l1.append(x['M'])
-        l2.append(x['F'])
+        l1.append(x['male'])
+        l2.append(x['female'])
     multi_bar_plot_data = {
         "labels":list(data3),
         "datasets": [
@@ -134,9 +145,9 @@ def get_two_bar_plot_data():
             {
                 "label": "Female-Count",
                 "data":l2,
-                "borderColor": "rgba(0,0,0,0.09)",
+                "borderColor": "rgba(255,0,0,0.9)",
                 "borderWidth": "0",
-                "backgroundColor": "rgba(0,0,0,0.07)",
+                "backgroundColor": "rgba(255,0,0,0.7)",
                 "fontFamily": "Poppins"
             }
         ]
@@ -201,7 +212,7 @@ def get_multi_line_plot_data():
 def get_area_plot_data():
     import json
     data1=execute_sql_query("""
-    select strftime('%Y',m.release_date),count(*) from imdb_movie as m,imdb_director as d where d.id=m.director_id and d.id=1 group by strftime('%Y',m.release_date);
+    select m.release_date,count(*) from imdb_movie as m,imdb_director as d where d.id=m.director_id and d.id=17 group by m.release_date;
     """
     )
     l1=[]
@@ -216,7 +227,7 @@ def get_area_plot_data():
         "datasets": [{
             "data": l2,
             "label": "Expense",
-            "backgroundColor": 'rgba(0,103,255,.15)',
+            "backgroundColor": 'rgba(255,0,255,0.5)',
             "borderColor": 'rgba(0,103,255,0.5)',
             "borderWidth": 3.5,
             "pointStyle": 'circle',
@@ -302,66 +313,28 @@ def get_multi_line_plot_with_area_data():
     import copy
 
     data1=execute_sql_query("""
-    select strftime('%Y',release_date),result,count(*) from imdb_movie group by strftime('%Y',release_date),result;
+    select count(*) from imdb_movie group by average_rating;
     """
     )
-    print(data1)
-    y={}
-    r={'Block Buster':0,
-        'Average':0,
-        'Disaster':0
-    }
     data4=execute_sql_query("""
-    select strftime('%Y',release_date) from imdb_movie group by strftime('%Y',release_date);
+    select average_rating from imdb_movie group by average_rating;
     """
     )
-    for year in data4:
-        y[year[0]]=copy.deepcopy(r)
-    
-    for i in data1:
-        if(i[1] == 'Block Buster'):
-            y[i[0]]['Block Buster']=copy.deepcopy(i[2])
-        elif(i[1] == 'Average'):
-             y[i[0]]['Average']=copy.deepcopy(i[2])
-        else:
-            y[i[0]]['Disaster']=copy.deepcopy(i[2])
-    l1=[]
-    l2=[]
-    l3=[]
-    for x in y.values():
-        l1.append(x['Block Buster'])
-        l2.append(x['Average'])
-        l3.append(x['Disaster'])
-    print(l1)
-        
+   
 
     multi_line_plot_with_area_data = {
-        "labels": list(data4),
+        "labels":list(data4),
         "defaultFontFamily": "Poppins",
         "datasets": [
             {
-                "label": "Block Buster",
-                "borderColor": "rgba(0,0,0,.09)",
-                "borderWidth": "1",
-                "backgroundColor": "rgba(0,0,0,.07)",
-                "data":l1
-            },
-            {
-                "label": "Average",
+                "label": "count of Rating",
                 "borderColor": "rgba(0, 123, 255, 0.9)",
                 "borderWidth": "1",
                 "backgroundColor": "rgba(0, 123, 255, 0.5)",
                 "pointHighlightStroke": "rgba(26,179,148,1)",
-                "data":l2
-            },
-            {
-                "label": "Disaster",
-                "borderColor": "rgba(0, 123, 255, 0.9)",
-                "borderWidth": "1",
-                "backgroundColor": "rgba(0, 123, 255, 0.5)",
-                "pointHighlightStroke": "rgba(26,179,148,1)",
-                "data": l3
+                "data":list(data1)
             }
+           
         ]
     }
 
@@ -383,8 +356,8 @@ def get_pie_chart_data():
         "datasets": [{
             "data":list(data1),
             "backgroundColor": [
-                "rgba(0, 123, 255,0.9)",
-                "rgba(0, 123, 255,0.7)",
+                "rgba(0, 255, 255,0.8)",
+                "rgba(255,255,1,0.9)",
                 "rgba(0, 123, 255,0.5)",
                 "rgba(0,0,0,0.07)"
             ],
@@ -410,10 +383,14 @@ def get_pie_chart_data():
 
 def get_polar_chart_data():
     import json
-
+   
+    data4=execute_sql_query("""
+    select average_rating from imdb_movie group by average_rating;
+    """
+    )
     polar_chart_data = {
         "datasets": [{
-            "data": [15, 18, 9, 6, 19],
+            "data":list(data1),
             "backgroundColor": [
                 "rgba(0, 123, 255,0.9)",
                 "rgba(0, 123, 255,0.8)",
@@ -423,18 +400,12 @@ def get_polar_chart_data():
             ]
 
         }],
-        "labels": [
-            "Green1",
-            "Green2",
-            "Green3",
-            "Green4",
-            "Green5"
-        ]
+        "labels":list(data4)
     }
     return {
         'polar_chart_data_one': json.dumps(
             polar_chart_data),
-        'polar_chart_data_one_title': 'Title'
+        'polar_chart_data_one_title': 'ratings'
     }
 
 

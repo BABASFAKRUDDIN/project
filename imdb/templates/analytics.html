@@ -13,6 +13,17 @@
     </div>
 {% endif %}
 
+{% if multi_bar_plot_data_one %}
+    <div class="col-lg-6">
+        <div class="au-card m-b-30">
+            <div class="au-card-inner">
+                <h3 class="title-2 m-b-40">{{multi_bar_plot_data_one_title}}</h3>
+                <canvas id="barChart1"></canvas>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
 {% if area_plot_data_one %}
     <div class="col-lg-6">
         <div class="au-card m-b-30">
@@ -88,16 +99,7 @@
 </div>
 {% endif %}
 
-{% if multi_bar_plot_data_one %}
-    <div class="col-lg-6">
-        <div class="au-card m-b-30">
-            <div class="au-card-inner">
-                <h3 class="title-2 m-b-40">{{multi_bar_plot_data_one_title}}</h3>
-                <canvas id="barChart1"></canvas>
-            </div>
-        </div>
-    </div>
-{% endif %}
+
 
 
 

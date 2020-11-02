@@ -7,14 +7,14 @@
     <div class="col-md-12">
         <!-- DATA TABLE -->
         <h2 class="heading-title m-b-35">{{ movie.name }} </h2>
-        <div>
+       <!-- <div>
             <img src="/imdb/media/{{ movie.poster }}" alt="Hi" style="height:300px;width:300px;">
         </div>
         <div>
             <p class="director-note">
                 {{ movie.description }}
             </p>
-        </div>
+        </div> -->
 
         <h3 class="title-3 m-b-45">Director: <a href="/imdb/director/{{ movie.director.id }}/">{{ movie.director.name }}</a></h3>
 
@@ -26,7 +26,7 @@
                 <tr>
                     <th>Actor id</th>
                     <th>Name</th>
-                    <th>Date Of Birth</th>
+                    <th>No.of FB likes</th>
                     <th>Gender</th>
                 </tr>
                 </thead>
@@ -38,7 +38,7 @@
                     <td >
                         <a href="/imdb/actor/{{ movie.actor_id }}/">{{ movie.name }}</a>
                     </td>
-                    <td>{{ movie.date_of_birth }}</td>
+                    <td>{{ movie.fb_likes }}</td>
                     <td>{{ movie.gender }}</td>
                 </tr>
                 {% endfor %}

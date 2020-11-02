@@ -7,14 +7,14 @@
     <div class="col-md-12">
         <!-- DATA TABLE -->
         <h2 class="heading-title m-b-35"> {{ directors.name }}</h2>
-        <div>
+        <!--<div>
             <img src="/imdb/media/{{ directors.poster }}" height="300" width="300">
         </div>
         <div>
             <p class="director-note">
                 {{ directors.description }}
            </p>
-        </div>
+        </div> -->
    
         <h3 class="title-5 m-b-45">Movies</h3>
         <div class="table-responsive table-responsive-data2">
@@ -38,7 +38,7 @@
                     </td>
                     <td>{{ movies.release_date }}</td>
                     <td>
-                        <span class="status--high">9.1</span>
+                        <span class="status--high">{{ movies.average_rating }}</span>
                     </td>
                     <td>{{ movies.box_office_collection_in_crores}}</td>
                 </tr>

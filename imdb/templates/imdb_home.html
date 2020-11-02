@@ -15,14 +15,14 @@
                     <th>Movie id</th>
                     <th>Name</th>
                     <th>Director</th>
-                    <th>Release Date</th>
+                    <th>Genre</th>
                     <th>Average Rating</th>
                     <th>Collections(in Crores.)</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-            {% for movie,rating in all_movies %}
+            {% for movie in all_movies %}
                 <tr class="tr-shadow">
                     <td>{{ movie.movie_id }}</td>
                     <td class="desc">
@@ -31,9 +31,9 @@
                     <td class="desc">
                         <a href="/imdb/director/{{ movie.director.id }}/">{{ movie.director.name }}</a>
                     </td>
-                    <td>{{ movie.release_date }}</td>
+                    <td>{{ movie.genre}}</td>
                     <td>
-                        <span class="status--high">{{ rating }}</span>
+                        <span class="status--high">{{ movie.average_rating}}</span>
                     </td>
                     <td>{{ movie.box_office_collection_in_crores}}</td>
                     <td>
@@ -41,11 +41,12 @@
                             <form method="post">
                                 {% csrf_token %}
                                 <button type="submit"
+					name='name'
                                         class="item"
                                         data-toggle="tooltip"
                                         data-placement="top"
                                         title="Delete"
-                                        value='{{ movie }}'
+                                        value= "{{ movie.movie_id }}"
                                         >
                                         
                                     <i class="zmdi zmdi-delete"></i>
